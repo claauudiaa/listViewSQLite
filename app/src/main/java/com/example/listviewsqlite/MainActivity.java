@@ -16,7 +16,6 @@ import androidx.core.view.WindowInsetsCompat;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    // Creamos variables
     private ListView lista;
     private TextView texto;
     private RadioButton radioButton_pulsado;
@@ -24,14 +23,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Establece el layout principal
         setContentView(R.layout.activity_main);
 
-        // Vinculamos las variables con el layout
         lista = findViewById(R.id.listView);
         texto = findViewById(R.id.texto_cambiante);
 
-        // Crea y rellena el ArrayList usando la clase Encapsulador
         ArrayList<Encapsulador> datos = new ArrayList<Encapsulador>();
         datos.add(new Encapsulador("SOPA DE VERDURAS", "10/10", false));
         datos.add(new Encapsulador("SOPA DE COCIDO", "10/10", false));
@@ -41,34 +37,24 @@ public class MainActivity extends AppCompatActivity {
         datos.add(new Encapsulador("SOPA DE CEBOLLA", "5/10", false));
         datos.add(new Encapsulador("SOPA DE AJO", "5/10", false));
 
-        // Configura el adaptador, sin él no se puede mostrar nada e instancia el Adaptador
         lista.setAdapter(new Adaptador(this, R.layout.entrada, datos) {
 
-            // Sobrescribe onEntrada() para llenarlo con lso datos
             @Override
             public void onEntrada(Object entrada, View view) {
                 if (entrada != null) {
-                    // Encuentra las vistas en entrada.xml y las vincula
                     TextView texto_superior_entrada = (TextView) view.findViewById(R.id.texto_titulo);
                     TextView texto_inferior_entrada = (TextView) view.findViewById(R.id.texto_datos);
                     RadioButton miRadio = (RadioButton) view.findViewById(R.id.boton);
 
-                    // Agrega los datos usando Encapsulador
                     texto_superior_entrada.setText(((Encapsulador) entrada).get_textoTitulo());
                     texto_inferior_entrada.setText(((Encapsulador) entrada).get_textoContenido());
 
-                    // Evento al pulsar cualquier radioButton
                     miRadio.setOnClickListener(new View.OnClickListener() {
-                        // Metodo obligatorio que debe sobrescribir
                         @Override
                         public void onClick(View v) {
-                            // Comprueba si otro botón se ha pulsado
                             if (radioButton_pulsado != null)
-                                // Si habia uno pulsado lo desmarca
                                 radioButton_pulsado.setChecked(false);
-                            // Actualiza radioButton_pulsado para que apunte a la nueva seleccionada
                             radioButton_pulsado = (RadioButton) v;
-                            // Cambia el texto
                             texto.setText("MARCADA UNA OPCIÓN");
                         }
                     });
@@ -77,21 +63,17 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    // Clase que encapsula los datos
     public static class Encapsulador {
         // Variables
         private String titulo;
         private String texto;
         private boolean dato1;
 
-        // COnstructor
         public Encapsulador(String textoTitulo, String textoContenido, boolean favorito) {
             this.titulo = textoTitulo;
             this.texto = textoContenido;
             this.dato1 = favorito;
         }
-
-        // Getters
 
         public String get_textoTitulo() {
             return titulo;
