@@ -10,7 +10,6 @@ import androidx.annotation.Nullable;
 
 public class AdmBaseDatos extends SQLiteOpenHelper {
 
-
     public AdmBaseDatos(@Nullable Runnable context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version) {
         super((Context) context, name, factory, version);
     }
