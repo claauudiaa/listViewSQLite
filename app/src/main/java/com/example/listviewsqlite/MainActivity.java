@@ -1,11 +1,16 @@
+
 package com.example.listviewsqlite;
 
+import android.annotation.SuppressLint;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.content.ContentValues;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,64 +21,116 @@ import androidx.core.view.WindowInsetsCompat;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    private ListView lista;
-    private TextView texto;
-    private RadioButton radioButton_pulsado;
+    public TextView mensaje;
+    public ListView lista;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         lista = findViewById(R.id.listView);
-        texto = findViewById(R.id.texto_cambiante);
+    }
 
-        ArrayList<Encapsulador> datos = new ArrayList<Encapsulador>();
-        datos.add(new Encapsulador("SOPA DE VERDURAS", "10/10", false));
-        datos.add(new Encapsulador("SOPA DE COCIDO", "10/10", false));
-        datos.add(new Encapsulador("SOPA DE POLLO", "9/10", false));
-        datos.add(new Encapsulador("SOPA DE PESCADO", "8/10", false));
-        datos.add(new Encapsulador("SOPA DE MARISCO", "6/10", false));
-        datos.add(new Encapsulador("SOPA DE CEBOLLA", "5/10", false));
-        datos.add(new Encapsulador("SOPA DE AJO", "5/10", false));
+    public void fBorrar (View view){
+        AdmBaseDatos base = new AdmBaseDatos(MainActivity.this, "cancionesBD", null, 1);
+        SQLiteDatabase baseDeDatos = base.getReadableDatabase();
 
-        lista.setAdapter(new Adaptador(this, R.layout.entrada, datos) {
+        baseDeDatos.execSQL("DELETE FROM canciones");
+        mensaje = findViewById(R.id.texto_informante);
+        mensaje.setText("Canciones borradas");
+    }
 
-            @Override
+    public void fInsertar (View view) {
+        AdmBaseDatos base = new AdmBaseDatos(MainActivity.this, "cancionesBD", null, 1);
+        SQLiteDatabase baseDeDatos = base.getReadableDatabase();
+
+        ContentValues registro = new ContentValues();
+
+        registro.put("id", 1);
+        registro.put("nombre","NO BYSTANDERS");
+        registro.put("cantante","Travis Scott");
+        baseDeDatos.insert("canciones",null, registro);
+
+        registro.put("id", 2);
+        registro.put("nombre","R.I.P");
+        registro.put("cantante","Playboi Carti");
+        baseDeDatos.insert("canciones",null, registro);
+
+        registro.put("id", 3);
+        registro.put("nombre","Flocky Flocky");
+        registro.put("cantante","Don Toliver");
+        baseDeDatos.insert("canciones",null, registro);
+
+        registro.put("id", 4);
+        registro.put("nombre","BIP BIP");
+        registro.put("cantante","Solitario");
+        baseDeDatos.insert("canciones",null, registro);
+
+        registro.put("id", 5);
+        registro.put("nombre","Vivienne Backwood");
+        registro.put("cantante","Gloosito");
+        baseDeDatos.insert("canciones",null, registro);
+
+        registro.put("id", 6);
+        registro.put("nombre","Lord Pretty Flacko Jodye 2");
+        registro.put("cantante","A$AP Rocky");
+        baseDeDatos.insert("canciones",null, registro);
+
+        registro.put("id", 7);
+        registro.put("nombre","SS");
+        registro.put("cantante","Ken Karson");
+        baseDeDatos.insert("canciones",null, registro);
+
+        mensaje = findViewById(R.id.texto_informante);
+        mensaje.setText("Canciones insertadas");
+    }
+
+    @SuppressLint("Range")
+    public void fConsultar(View view) {
+        ArrayList<Encapsulador> listaBD = new ArrayList<>();
+        AdmBaseDatos base = new AdmBaseDatos(MainActivity.this, "cancionesBD", null, 1);
+        SQLiteDatabase baseDeDatos = base.getReadableDatabase();
+
+        String query ="SELECT * from canciones";
+        Cursor cursor = baseDeDatos.rawQuery(query,null);
+
+        int i=0;
+        while (cursor.moveToNext()) {
+            // Guardamos los datos en el arraylist que luego pintaremos con el adaptador
+            String nombre = cursor.getString(cursor.getColumnIndex("nombre"));
+            String cantante = cursor.getString(cursor.getColumnIndex("cantante"));
+            listaBD.add(new Encapsulador(nombre, cantante));
+        }
+
+        Adaptador adaptador = new Adaptador(this, R.layout.entrada, listaBD) {
             public void onEntrada(Object entrada, View view) {
                 if (entrada != null) {
                     TextView texto_superior_entrada = (TextView) view.findViewById(R.id.texto_titulo);
                     TextView texto_inferior_entrada = (TextView) view.findViewById(R.id.texto_datos);
-                    RadioButton miRadio = (RadioButton) view.findViewById(R.id.boton);
 
-                    texto_superior_entrada.setText(((Encapsulador) entrada).get_textoTitulo());
-                    texto_inferior_entrada.setText(((Encapsulador) entrada).get_textoContenido());
+                    // Agrega los datos usando el arraylist
+                    texto_superior_entrada.setText();
+                    texto_inferior_entrada.setText();
 
-                    miRadio.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            if (radioButton_pulsado != null)
-                                radioButton_pulsado.setChecked(false);
-                            radioButton_pulsado = (RadioButton) v;
-                            texto.setText("MARCADA UNA OPCIÓN");
-                        }
-                    });
+                    mensaje = findViewById(R.id.texto_informante);
+                    mensaje.setText("Canciones consultadas");
                 }
             }
-        });
+        };
     }
 
     public static class Encapsulador {
         // Variables
         private String titulo;
         private String texto;
-        private boolean dato1;
 
-        public Encapsulador(String textoTitulo, String textoContenido, boolean favorito) {
+        // COnstructor
+        public Encapsulador(String textoTitulo, String textoContenido) {
             this.titulo = textoTitulo;
             this.texto = textoContenido;
-            this.dato1 = favorito;
         }
+
+        // Getters
 
         public String get_textoTitulo() {
             return titulo;
@@ -82,9 +139,6 @@ public class MainActivity extends AppCompatActivity {
         public String get_textoContenido() {
             return texto;
         }
-
-        public boolean get_checkBox1() {
-            return dato1;
-        }
     }
-}
+
+
