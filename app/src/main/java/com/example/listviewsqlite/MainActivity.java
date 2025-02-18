@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -107,10 +108,9 @@ public class MainActivity extends AppCompatActivity {
                 if (entrada != null) {
                     TextView texto_superior_entrada = (TextView) view.findViewById(R.id.texto_titulo);
                     TextView texto_inferior_entrada = (TextView) view.findViewById(R.id.texto_datos);
-
-                    // Agrega los datos usando el arraylist
-                    texto_superior_entrada.setText();
-                    texto_inferior_entrada.setText();
+                    Encapsulador paco = null;
+                    texto_superior_entrada.setText(paco.get_textoTitulo());
+                    texto_inferior_entrada.setText(paco.get_textoContenido());
 
                     mensaje = findViewById(R.id.texto_informante);
                     mensaje.setText("Canciones consultadas");
@@ -140,5 +140,5 @@ public class MainActivity extends AppCompatActivity {
             return texto;
         }
     }
-
+}
 
